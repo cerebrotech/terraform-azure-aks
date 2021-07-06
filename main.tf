@@ -1,23 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      version = "~> 2.46"
-    }
-  }
-
-  backend "azurerm" {
-    resource_group_name  = "dominoterraform"
-    storage_account_name = "dominoterraformstorage"
-    container_name       = "tfstate"
-    key                  = "dev.terraform.tfstate"
-  }
-}
-
-provider "azurerm" {
-  partner_id = "31912fbf-f6dd-5176-bffb-0a01e8ac71f2"
-  features {}
-}
-
 locals {
   cluster_name   = var.cluster_name != null ? var.cluster_name : terraform.workspace
   resource_group = var.resource_group_name != null ? data.azurerm_resource_group.k8s[0] : azurerm_resource_group.k8s[0]
