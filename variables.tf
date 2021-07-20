@@ -5,7 +5,6 @@ variable "api_server_authorized_ip_ranges" {
 
 variable "cluster_name" {
   type        = string
-  default     = null
   description = "The Domino cluster name for the K8s cluster and resource group"
 }
 
@@ -21,23 +20,15 @@ variable "containers" {
   }))
 
   default = {
-    registry = {
-      container_access_type = "private"
-    }
     backups = {
       container_access_type = "private"
     }
   }
 }
 
-variable "resource_group_name" {
+variable "resource_group" {
   type        = string
-  default     = null
   description = "Name of optional pre-existing resource group to install AKS in"
-}
-
-variable "location" {
-  default = "West US 2"
 }
 
 # refer https://azure.microsoft.com/pricing/details/monitor/ for log analytics pricing
@@ -116,12 +107,6 @@ variable "node_pool_overrides" {
   default = {}
 }
 
-variable "storage_account_name" {
-  type        = string
-  default     = null
-  description = "Optional custom name for Azure storage account"
-}
-
 variable "storage_account_tier" {
   type    = string
   default = "Standard"
@@ -130,12 +115,6 @@ variable "storage_account_tier" {
 variable "storage_account_replication_type" {
   type    = string
   default = "LRS"
-}
-
-variable "subscription_id" {
-  type        = string
-  description = "An existing Subscription ID to add the deployment"
-  default     = ""
 }
 
 variable "tags" {
@@ -148,4 +127,9 @@ variable "kubernetes_version" {
   type        = string
   default     = null
   description = "Optional Kubernetes version to provision. Allows partial input (e.g. 1.18) which is then chosen from azurerm_kubernetes_service_versions."
+}
+
+variable "registry_tier" {
+  type    = string
+  default = "Standard"
 }

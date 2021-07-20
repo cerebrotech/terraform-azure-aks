@@ -4,17 +4,17 @@ resource "random_id" "log_analytics_workspace_name_suffix" {
 
 resource "azurerm_log_analytics_workspace" "logs" {
   # The WorkSpace name has to be unique across the whole of azure, not just the current subscription/tenant.
-  name                = "${local.resource_group.name}-${random_id.log_analytics_workspace_name_suffix.dec}"
-  location            = local.resource_group.location
-  resource_group_name = local.resource_group.name
+  name                = "${var.resource_group}-${random_id.log_analytics_workspace_name_suffix.dec}"
+  location            = data.azurerm_resource_group.aks.location
+  resource_group_name = data.azurerm_resource_group.aks.name
   sku                 = var.log_analytics_workspace_sku
-  tags                = local.tags
+  tags                = var.tags
 }
 
 resource "azurerm_log_analytics_solution" "logs" {
   solution_name         = "ContainerInsights"
   location              = azurerm_log_analytics_workspace.logs.location
-  resource_group_name   = local.resource_group.name
+  resource_group_name   = data.azurerm_resource_group.aks.name
   workspace_resource_id = azurerm_log_analytics_workspace.logs.id
   workspace_name        = azurerm_log_analytics_workspace.logs.name
 
@@ -23,7 +23,7 @@ resource "azurerm_log_analytics_solution" "logs" {
     product   = "OMSGallery/ContainerInsights"
   }
 
-  tags = local.tags
+  tags = var.tags
 
   lifecycle {
     ignore_changes = [

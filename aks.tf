@@ -6,7 +6,7 @@ locals {
 }
 
 data "azurerm_kubernetes_service_versions" "selected" {
-  location        = local.resource_group.location
+  location        = data.azurerm_resource_group.aks.location
   version_prefix  = var.kubernetes_version
   include_preview = false
 }
@@ -23,13 +23,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
     ]
   }
 
-  name                    = local.cluster_name
-  location                = local.resource_group.location
-  resource_group_name     = local.resource_group.name
-  dns_prefix              = local.cluster_name
+  name                    = var.cluster_name
+  location                = data.azurerm_resource_group.aks.location
+  resource_group_name     = data.azurerm_resource_group.aks.name
+  dns_prefix              = var.cluster_name
   private_cluster_enabled = false
   sku_tier                = var.cluster_sku_tier
-  kubernetes_version      = var.kubernetes_version != null ? data.azurerm_kubernetes_service_versions.selected.latest_version : null
+  kubernetes_version      = data.azurerm_kubernetes_service_versions.selected.latest_version
 
   api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
 
@@ -46,7 +46,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     min_count             = local.node_pools.platform.min_count
     max_count             = local.node_pools.platform.max_count
     max_pods              = local.node_pools.platform.max_pods
-    tags                  = local.tags
+    tags                  = var.tags
   }
 
   identity {
@@ -70,7 +70,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_policy    = "calico"
   }
 
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "aks" {
@@ -99,5 +99,5 @@ resource "azurerm_kubernetes_cluster_node_pool" "aks" {
   min_count             = each.value.min_count
   max_count             = each.value.max_count
   max_pods              = each.value.max_pods
-  tags                  = local.tags
+  tags                  = var.tags
 }
