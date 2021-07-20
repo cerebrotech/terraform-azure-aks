@@ -23,21 +23,24 @@ provider "azurerm" {
 }
 
 variable "api_server_authorized_ip_ranges" {
-  type        = list(string)
-}
-
-variable "subscription_id" {
-  type        = string
+  type = list(string)
 }
 
 variable "tags" {
-  type        = map(string)
+  type = map(string)
+}
+
+resource "azurerm_resource_group" "ci" {
+  name     = terraform.workspace
+  location = "westus2"
+  tags     = var.tags
 }
 
 module "aks" {
   source = "./.."
 
+  cluster_name                    = terraform.workspace
+  resource_group                  = azurerm_resource_group.ci.name
   api_server_authorized_ip_ranges = var.api_server_authorized_ip_ranges
-  subscription_id                 = var.subscription_id
   tags                            = var.tags
 }

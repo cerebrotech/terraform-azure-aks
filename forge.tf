@@ -1,7 +1,7 @@
 resource "azurerm_container_registry" "forge" {
-  name                = replace("${local.resource_group.name}forge", "/[^a-zA-Z0-9]/", "")
-  resource_group_name = local.resource_group.name
-  location            = local.resource_group.location
+  name                = replace("${var.resource_group}forge", "/[^a-zA-Z0-9]/", "")
+  resource_group_name = data.azurerm_resource_group.aks.name
+  location            = data.azurerm_resource_group.aks.location
   sku                 = var.registry_tier
   admin_enabled       = false
 
